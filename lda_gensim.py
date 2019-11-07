@@ -139,41 +139,13 @@ def main():
     exclude.add("–")
     lemma = WordNetLemmatizer()
 
-    #data_words = list(sent_to_words(compileddoc))
-    #print("Data words:\n")
-    #print(data_words[:1])
-
-    # Build the bigram and trigram models
-    #bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100)  # higher threshold fewer phrases.
-    #trigram = gensim.models.Phrases(bigram[data_words], threshold=100)
-
-    # Faster way to get a sentence clubbed as a trigram/bigram
-    #bigram_mod = gensim.models.phrases.Phraser(bigram)
-    #trigram_mod = gensim.models.phrases.Phraser(trigram)
-
-    # Remove Stop Words
-    #data_words_nostops = remove_stopwords(data_words)
-
-    # Form Bigrams
-    #data_words_bigrams = make_bigrams(data_words_nostops)
-
-    # Initialize spacy 'de' model, keeping only tagger component (for efficiency)
-    # python3 -m spacy download german model
-    #nlp = spacy.load('de', disable=['parser', 'ner'])
-
-    # Do lemmatization keeping only noun, adj, vb, adv
-    #data_lemmatized = lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
-
-    #print("Data Lemmatized:\n")
-    #print(data_lemmatized[:1])
-
     final_doc = [clean(document).split() for document in compileddoc]
     print('\nFiles in compileddoc list cleaned.')
     dictionary = corpora.Dictionary(final_doc)
     DT_matrix = [dictionary.doc2bow(doc) for doc in final_doc]
     print('\nDT_matrix successfully created.')
 
-    # 6 core machine
+    # workers=5 indicates a 6 core machine, change as needed
     lda_model = gensim.models.LdaMulticore(workers=5, corpus=DT_matrix, num_topics=10, id2word=dictionary)
     print('\nModel trained.')
     print(lda_model.print_topics())
